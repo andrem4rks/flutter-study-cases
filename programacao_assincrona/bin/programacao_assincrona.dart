@@ -1,5 +1,14 @@
-import 'package:programacao_assincrona/programacao_assincrona.dart' as programacao_assincrona;
+import 'package:programacao_assincrona/programacao_assincrona.dart'
+    as programacao_assincrona;
 
-void main(List<String> arguments) {
-  print('Hello world: ${programacao_assincrona.calculate()}!');
+void main() {
+  var future = Future.delayed(Duration(seconds: 2));
+
+  future.then((value) => print(4));
+
+  print('1');
+  print('2');
+  print('3');
+
+
 }
