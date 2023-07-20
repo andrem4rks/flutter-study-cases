@@ -1,53 +1,56 @@
 // ignore_for_file: prefer_const_constructors, use_key_in_widget_constructors, avoid_print, library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
-import './questao.dart';
+import 'package:projeto_perguntas_udemy/questionario.dart';
+import 'package:projeto_perguntas_udemy/resultado.dart';
 
 main() => runApp(PerguntaApp());
 
 class _PerguntaAppState extends State<PerguntaApp> {
   var _perguntaSelecionada = 0;
 
+  final _perguntas = [
+    {
+      'texto': 'Qual é a sua cor favorita?',
+      'respostas': ['Preto', 'Vermelho', 'Verde', 'Branco'],
+    },
+    {
+      'texto': 'Qual seu animal favorito?',
+      'respostas': ['Coelho', 'Cobra', 'Elefante', 'Leão'],
+    },
+    {
+      'texto': 'Qual seu carro favorito?',
+      'respostas': ['Celta', 'HB20', 'Gol', 'Fusca'],
+    }
+  ];
+
   void _responder() {
-    print(_perguntaSelecionada);
-    if (_perguntaSelecionada + 1 <= 1) {
+    if (temPerguntaSelecionada) {
       setState(() {
         _perguntaSelecionada++;
       });
     }
   }
 
+  bool get temPerguntaSelecionada {
+    return _perguntaSelecionada < _perguntas.length;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final perguntas = [
-      'Qual é a sua cor favorita?',
-      'Qual seu animal favorito?',
-    ];
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
           title: Center(
-            child: Text('Second App'),
+            child: Text('Perguntas'),
           ),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Questao(perguntas[_perguntaSelecionada]),
-            ElevatedButton(
-              onPressed: _responder,
-              child: (Text('Resposta 1')),
-            ),
-            ElevatedButton(
-              onPressed: _responder,
-              child: (Text('Resposta 2')),
-            ),
-            ElevatedButton(
-              onPressed: _responder,
-              child: (Text('Resposta 3')),
-            ),
-          ],
-        ),
+        body: temPerguntaSelecionada
+            ? Questionario(
+                perguntas: _perguntas,
+                perguntaSelecionada: _perguntaSelecionada,
+                quandoSelecionado: _responder)
+            : Resultado(),
       ),
     );
   }
