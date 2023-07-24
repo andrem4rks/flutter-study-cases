@@ -11,7 +11,7 @@ class Questionario extends StatelessWidget {
 
   final List<Map<String, Object>> perguntas;
   final int perguntaSelecionada;
-  final void Function() quandoSelecionado;
+  final void Function(int) quandoSelecionado;
 
   bool get temPerguntaSelecionada {
     return perguntaSelecionada < perguntas.length;
@@ -19,7 +19,7 @@ class Questionario extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<String> respostas = temPerguntaSelecionada
+    List<Map<String, Object>> respostas = temPerguntaSelecionada
         ? perguntas[perguntaSelecionada].cast()['respostas']
         : [];
 
@@ -27,7 +27,12 @@ class Questionario extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Questao(perguntas[perguntaSelecionada]['texto'].toString()),
-        ...respostas.map((t) => Resposta(t, quandoSelecionado)).toList(),
+        ...respostas.map((resp) {
+          return Resposta(
+            resp['texto'] as String,
+            () => quandoSelecionado(int.parse(resp['pontuacao'].toString())),
+          );
+        }).toList(),
       ],
     );
   }
