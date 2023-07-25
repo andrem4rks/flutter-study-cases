@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_return_types_on_setters
+
 import 'produto.dart';
 
 class VendaItem {

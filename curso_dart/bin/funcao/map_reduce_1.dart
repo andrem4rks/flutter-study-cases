@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_function_declarations_over_variables
+
 main() {
   var alunos = [
     {'nome': 'Alfredo', 'nota': 9.9},

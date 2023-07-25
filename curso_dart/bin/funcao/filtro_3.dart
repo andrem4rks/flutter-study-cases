@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_function_declarations_over_variables
+
 List<E> filtrar<E>(List<E> lista, Function(E) fn) {
   List<E> listaFiltrada = [];
   for(E elemento in lista) {
