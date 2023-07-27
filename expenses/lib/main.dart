@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:expenses/components/chart.dart';
 import 'package:expenses/components/transaction_form.dart';
+import 'package:expenses/components/transaction_list2.dart';
 import 'package:flutter/material.dart';
 
 import 'components/transaction_list.dart';
@@ -10,14 +11,16 @@ import 'models/transaction.dart';
 void main() => runApp(ExpensesApp());
 
 class ExpensesApp extends StatelessWidget {
-  ExpensesApp({super.key});
-
   final ThemeData tema = ThemeData();
+
+  ExpensesApp({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyHomePage(),
+      home: MyHomePage((p0, p1) {}, () {}),
       theme: tema.copyWith(
         colorScheme: tema.colorScheme.copyWith(
           primary: Colors.purple,
@@ -45,61 +48,23 @@ class ExpensesApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  void Function(String, double) _addTransaction;
+  Function() _recentTransactions;
+
+    (this._addTransaction, this._recentTransactions, {super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _transactions = [
-    Transaction(
-      id: 't0',
-      title: 'Conta Antiga',
-      value: 400.00,
-      date: DateTime.now().subtract(const Duration(days: 33)),
-    ),
-    Transaction(
-      id: 't1',
-      title: 'Novo Tenis de Corrida',
-      value: 310.76,
-      date: DateTime.now().subtract(const Duration(days: 3)),
-    ),
-    Transaction(
-      id: 't2',
-      title: 'Conta de Luz',
-      value: 211.30,
-      date: DateTime.now().subtract(const Duration(days: 4)),
-    ),
-  ];
-
-  List<Transaction> get _recentTransactions {
-    return _transactions.where((tr) {
-      return tr.date.isAfter(DateTime.now().subtract(const Duration(days: 7)));
-    }).toList();
-  }
-
-  _addTransaction(String title, double value) {
-    final newTranscation = Transaction(
-      id: Random().nextDouble().toString(),
-      title: title,
-      value: value,
-      date: DateTime.now(),
-    );
-
-    setState(() {
-      _transactions.add(newTranscation);
-    });
-
-    Navigator.of(context).pop();
-  }
-
   _openTransactionFormModal(BuildContext context) {
     showModalBottomSheet(
-        context: context,
-        builder: (_) {
-          return TransactionForm(_addTransaction);
-        });
+      context: context,
+      builder: (_) {
+        return TransactionForm(widget._addTransaction);
+      },
+    );
   }
 
   @override
@@ -115,12 +80,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
+        child: SizedBox(
+          width: 500,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Chart(_recentTransactions),
-              TransactionList(_transactions.reversed.toList()),
+              Chart(widget._recentTransactions()),
+              TransactionList2(),
             ],
           ),
         ),
