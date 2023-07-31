@@ -1,13 +1,12 @@
-import 'dart:math';
-
 import 'package:expenses/models/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
+  final void Function(String) onRemove;
 
-  const TransactionList(this.transactions, {super.key});
+  const TransactionList(this.transactions, this.onRemove, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +28,7 @@ class TransactionList extends StatelessWidget {
                     'assets/images/waiting.png',
                     fit: BoxFit.cover,
                   ),
-                )
+                ),
               ],
             )
           : ListView.builder(
@@ -46,7 +45,7 @@ class TransactionList extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                         color: Theme.of(context).colorScheme.primary,
                       ),
-                      child: FittedBox( 
+                      child: FittedBox(
                         child: Padding(
                           padding: const EdgeInsets.all(10),
                           child: Text(
@@ -65,6 +64,11 @@ class TransactionList extends StatelessWidget {
                     ),
                     subtitle: Text(
                       DateFormat('d MMM y').format(tr.date),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      color: Colors.red[700],
+                      onPressed: () => onRemove(tr.id),
                     ),
                   ),
                 );
