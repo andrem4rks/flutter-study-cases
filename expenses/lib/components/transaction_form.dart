@@ -1,5 +1,9 @@
 // ignore_for_file: avoid_print
 
+import 'dart:math';
+
+import 'package:expenses/components/transaction_list2.dart';
+import 'package:expenses/models/transaction.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -26,7 +30,6 @@ class _TransactionFormState extends State<TransactionForm> {
     if (title.isEmpty || value <= 0 || _selectedDate == null) {
       return;
     }
-
     widget.onSubmit(title, value, _selectedDate!);
   }
 
