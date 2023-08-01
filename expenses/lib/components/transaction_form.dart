@@ -1,5 +1,9 @@
 // ignore_for_file: avoid_print
 
+import 'dart:math';
+
+import 'package:expenses/components/transaction_list2.dart';
+import 'package:expenses/models/transaction.dart';
 import 'package:flutter/material.dart';
 
 class TransactionForm extends StatefulWidget {
@@ -26,7 +30,16 @@ class _TransactionFormState extends State<TransactionForm> {
       return;
     }
 
-    widget.onSubmit(title, value);
+    final newTransaction = Transaction(
+      id: Random().nextDouble().toString(),
+      title: title,
+      value: value,
+      date: DateTime.now(),
+    );
+
+    TransactionList2(newTransaction: newTransaction);
+
+    // widget.onSubmit(title, value);
   }
 
   @override
