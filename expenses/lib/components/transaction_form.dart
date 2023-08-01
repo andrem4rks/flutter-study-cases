@@ -5,41 +5,51 @@ import 'dart:math';
 import 'package:expenses/components/transaction_list2.dart';
 import 'package:expenses/models/transaction.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class TransactionForm extends StatefulWidget {
-  final void Function(String, double) onSubmit;
+  final void Function(String, double, DateTime) onSubmit;
 
-  TransactionForm(this.onSubmit, {super.key});
+  const TransactionForm(this.onSubmit, {super.key});
 
   @override
   State<TransactionForm> createState() => _TransactionFormState();
 }
 
 class _TransactionFormState extends State<TransactionForm> {
-  final titleController = TextEditingController();
-
-  final valueController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _valueController = TextEditingController();
+  DateTime? _selectedDate = DateTime.now();
 
   final focus = FocusNode();
 
   _submitForm() {
-    final title = titleController.text;
-    final value = double.tryParse(valueController.text) ?? 0.0;
+    final title = _titleController.text;
+    final value = double.tryParse(_valueController.text) ?? 0.0;
 
-    if (title.isEmpty || value <= 0) {
+    if (title.isEmpty || value <= 0 || _selectedDate == null) {
       return;
     }
+    widget.onSubmit(title, value, _selectedDate!);
+  }
 
-    final newTransaction = Transaction(
-      id: Random().nextDouble().toString(),
-      title: title,
-      value: value,
-      date: DateTime.now(),
+  _showDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2019),
+      lastDate: DateTime.now(),
+    ).then(
+      (pickedDate) {
+        return pickedDate != null
+            ? setState(
+                () {
+                  _selectedDate = pickedDate;
+                },
+              )
+            : null;
+      },
     );
-
-    TransactionList2(newTransaction: newTransaction);
-
-    // widget.onSubmit(title, value);
   }
 
   @override
@@ -51,7 +61,7 @@ class _TransactionFormState extends State<TransactionForm> {
         child: Column(
           children: [
             TextField(
-              controller: titleController,
+              controller: _titleController,
               textInputAction: TextInputAction.next,
               onSubmitted: (_) => FocusScope.of(context).requestFocus(focus),
               decoration: const InputDecoration(
@@ -59,7 +69,7 @@ class _TransactionFormState extends State<TransactionForm> {
               ),
             ),
             TextField(
-              controller: valueController,
+              controller: _valueController,
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
               focusNode: focus,
@@ -68,21 +78,54 @@ class _TransactionFormState extends State<TransactionForm> {
                 labelText: 'Valor (R\$)',
               ),
             ),
+            SizedBox(
+              height: 70,
+              child: Flex(
+                direction: Axis.horizontal,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _selectedDate == null
+                        ? 'Nenhuma data selecionada!'
+                        : 'Data Selecionada : ${DateFormat('dd/MM/y').format(_selectedDate!)}',
+                    style: const TextStyle(fontSize: 15),
+                  ),
+                  TextButton(
+                    onPressed: _showDatePicker,
+                    child: Text(
+                      'Selecionar Data',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Container(
               width: double.infinity,
               alignment: Alignment.centerRight,
               margin: const EdgeInsets.symmetric(vertical: 8),
-              child: TextButton(
-                child: const Text(
-                  'Nova Transação',
-                  style: TextStyle(
-                    color: Colors.purple,
-                    fontWeight: FontWeight.bold,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.0)),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Nova Transação',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
                   ),
                 ),
                 onPressed: () => _submitForm(),
               ),
-            )
+            ),
           ],
         ),
       ),

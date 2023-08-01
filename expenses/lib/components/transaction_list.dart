@@ -4,8 +4,9 @@ import 'package:intl/intl.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
+  final void Function(String) onRemove;
 
-  const TransactionList(this.transactions, {super.key});
+  const TransactionList(this.transactions, this.onRemove, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +23,12 @@ class TransactionList extends StatelessWidget {
                   ),
                 ),
                 SizedBox(
-                  height: 400,
+                  height: 300,
                   child: Image.asset(
                     'assets/images/waiting.png',
                     fit: BoxFit.cover,
                   ),
-                )
+                ),
               ],
             )
           : ListView.builder(
@@ -35,53 +36,40 @@ class TransactionList extends StatelessWidget {
               itemBuilder: (context, index) {
                 final tr = transactions[index];
                 return Card(
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.symmetric(
-                          horizontal: 15,
-                          vertical: 10,
-                        ),
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Colors.purple,
-                            width: 2,
-                          ),
-                          borderRadius: const BorderRadius.all(
-                            Radius.circular(10),
-                          ),
-                        ),
-                        child: Text(
-                          'R\$ ${tr.value.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20,
-                            color: Colors.purple,
+                  elevation: 5,
+                  child: ListTile(
+                    leading: Container(
+                      height: double.infinity,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      child: FittedBox(
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: Text(
+                            'R\$ ${tr.value.toStringAsFixed(2)}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                            ),
                           ),
                         ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            tr.title,
-                            textAlign: TextAlign.start,
-                            style: Theme.of(context).textTheme.titleLarge,
-                            // style: const TextStyle(
-                            //   fontSize: 16,
-                            //   fontWeight: FontWeight.bold,
-                            // ),
-                          ),
-                          Text(
-                            DateFormat('d MMM y').format(tr.date).toString(),
-                            style: const TextStyle(
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
+                    ),
+                    title: Text(
+                      tr.title,
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    subtitle: Text(
+                      DateFormat('d MMM y').format(tr.date),
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete),
+                      color: Colors.red[700],
+                      onPressed: () => onRemove(tr.id),
+                    ),
                   ),
                 );
               },
