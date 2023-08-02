@@ -33,10 +33,10 @@ class ExpensesApp extends StatelessWidget {
             color: Colors.black,
           ),
         ),
-        appBarTheme: const AppBarTheme(
+        appBarTheme: AppBarTheme(
           titleTextStyle: TextStyle(
             fontFamily: 'Quicksand',
-            fontSize: 20,
+            fontSize: 20 * MediaQuery.of(context).textScaleFactor,
             fontWeight: FontWeight.bold,
             color: Colors.white,
           ),
@@ -55,6 +55,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _transactions = [];
+  bool _showChart = false;
 
   _addTransaction(String title, double value, DateTime date) {
     final newTransaction = Transaction(
@@ -94,23 +95,60 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Despesas Pessoais',
-          style: TextStyle(
-            fontFamily: 'OpenSans',
-          ),
-        ),
+    bool isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
+    final appBar = AppBar(
+      title: const Text(
+        'Despesas Pessoais',
       ),
+      actions: [
+        if (isLandscape)
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: IconButton(
+              onPressed: () {
+                setState(() {
+                  _showChart = !_showChart;
+                });
+              },
+              icon: Icon(
+                _showChart ? Icons.list : Icons.show_chart,
+              ),
+            ),
+          ),
+      ],
+    );
+
+    final availableHeight = MediaQuery.of(context).size.height -
+        appBar.preferredSize.height -
+        MediaQuery.of(context).padding.top -
+        16; // Tamanho do Padding total
+
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            children: [
-              Chart(_recentTransactions),
-              TransactionList(_transactions, _removeTransaction),
-            ],
+        child: Center(
+          child: Container(
+            width: 768,
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  if (_showChart || !isLandscape)
+                    SizedBox(
+                      height: availableHeight * (isLandscape ? 0.5 : 0.20),
+                      child: Chart(_recentTransactions),
+                    ),
+                  if (!_showChart)
+                    SizedBox(
+                      height: availableHeight * 0.8,
+                      child: TransactionList(_transactions, _removeTransaction),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
