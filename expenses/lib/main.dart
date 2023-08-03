@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'dart:math';
+import 'package:flutter/foundation.dart';
 
 import 'package:expenses/components/chart.dart';
 import 'package:expenses/components/transaction_form.dart';
@@ -22,9 +24,9 @@ class ExpensesApp extends StatelessWidget {
       home: const MyHomePage(),
       theme: tema.copyWith(
         colorScheme: tema.colorScheme.copyWith(
-          primary: Colors.purple,
-          secondary: Colors.purple[300],
-        ),
+            primary: Colors.purple,
+            secondary: const Color.fromRGBO(186, 104, 200, 1),
+            tertiary: const Color.fromRGBO(116, 94, 255, 1)),
         textTheme: tema.textTheme.copyWith(
           titleLarge: const TextStyle(
             fontFamily: 'OpenSans',
@@ -95,8 +97,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    bool isLandscape =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final mediaQuery = MediaQuery.of(context);
+    bool isLandscape = mediaQuery.orientation == Orientation.landscape;
 
     final appBar = AppBar(
       title: const Text(
@@ -120,9 +122,9 @@ class _MyHomePageState extends State<MyHomePage> {
       ],
     );
 
-    final availableHeight = MediaQuery.of(context).size.height -
+    final availableHeight = mediaQuery.size.height -
         appBar.preferredSize.height -
-        MediaQuery.of(context).padding.top -
+        mediaQuery.padding.top -
         16; // Tamanho do Padding total
 
     return Scaffold(
@@ -136,14 +138,32 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
+                  // if (isLandscape)
+                  //   Row(
+                  //     mainAxisAlignment: MainAxisAlignment.center,
+                  //     children: [
+                  //       const Text('Exibir Gráfico'),
+                  //       Switch.adaptive(
+                  //         value: _showChart,
+                  //         activeColor: Theme.of(context).colorScheme.tertiary,
+                  //         onChanged: (value) {
+                  //           setState(() {
+                  //             _showChart = value;
+                  //           });
+                  //         },
+                  //       ),
+                  //     ],
+                  //   ),
                   if (_showChart || !isLandscape)
                     SizedBox(
-                      height: availableHeight * (isLandscape ? 0.5 : 0.20),
+                      height: availableHeight * (isLandscape ? 0.6 : 0.2),
                       child: Chart(_recentTransactions),
                     ),
-                  if (!_showChart)
+                  if (!_showChart || !isLandscape)
                     SizedBox(
-                      height: availableHeight * 0.8,
+                      height: isLandscape
+                          ? availableHeight * 1
+                          : availableHeight * 0.8,
                       child: TransactionList(_transactions, _removeTransaction),
                     ),
                 ],
@@ -152,10 +172,19 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _openTransactionFormModal(context),
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: kIsWeb
+          ? FloatingActionButton(
+              backgroundColor: Theme.of(context).colorScheme.tertiary,
+              onPressed: () => _openTransactionFormModal(context),
+              child: const Icon(Icons.add),
+            )
+          : Platform.isIOS
+              ? Container()
+              : FloatingActionButton(
+                  backgroundColor: Theme.of(context).colorScheme.tertiary,
+                  onPressed: () => _openTransactionFormModal(context),
+                  child: const Icon(Icons.add),
+                ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
