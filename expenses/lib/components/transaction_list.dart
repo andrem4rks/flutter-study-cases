@@ -10,70 +10,87 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height - 200,
-      child: transactions.isEmpty
-          ? Column(
+    return transactions.isEmpty
+        ? LayoutBuilder(builder: (ctx, constraints) {
+            return Column(
               children: [
-                Container(
-                  margin: const EdgeInsets.fromLTRB(0, 30, 0, 30),
-                  child: Text(
-                    'Nenhuma Transação Cadastrada',
-                    style: Theme.of(context).textTheme.titleLarge,
+                SizedBox(
+                  height: constraints.maxHeight * 0.2,
+                  width: 350,
+                  child: FittedBox(
+                    child: Text(
+                      'Nenhuma Transação Cadastrada',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
                   ),
                 ),
                 SizedBox(
-                  height: 300,
+                  height: constraints.maxHeight * 0.7,
                   child: Image.asset(
                     'assets/images/waiting.png',
-                    fit: BoxFit.cover,
+                    fit: BoxFit.fitHeight,
                   ),
                 ),
+                SizedBox(
+                  height: constraints.maxHeight * 0.1,
+                )
               ],
-            )
-          : ListView.builder(
-              itemCount: transactions.length,
-              itemBuilder: (context, index) {
-                final tr = transactions[index];
-                return Card(
-                  elevation: 5,
-                  child: ListTile(
-                    leading: Container(
-                      height: double.infinity,
-                      width: 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      child: FittedBox(
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Text(
-                            'R\$ ${tr.value.toStringAsFixed(2)}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 18,
-                            ),
+            );
+          })
+        : ListView.builder(
+            itemCount: transactions.length,
+            itemBuilder: (context, index) {
+              final tr = transactions[index];
+              return Card(
+                elevation: 5,
+                child: ListTile(
+                  leading: Container(
+                    height: double.infinity,
+                    width: 100,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(5),
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    child: FittedBox(
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Text(
+                          'R\$ ${tr.value.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
                           ),
                         ),
                       ),
                     ),
-                    title: Text(
-                      tr.title,
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    subtitle: Text(
-                      DateFormat('d MMM y').format(tr.date),
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      color: Colors.red[700],
-                      onPressed: () => onRemove(tr.id),
-                    ),
                   ),
-                );
-              },
-            ),
-    );
+                  title: Text(
+                    tr.title,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  subtitle: Text(
+                    DateFormat('d MMM y').format(tr.date),
+                  ),
+                  trailing: MediaQuery.of(context).size.width > 400
+                      ? TextButton.icon(
+                          style: ButtonStyle(
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.red[700]),
+                            iconColor:
+                                MaterialStateProperty.all(Colors.red[700]),
+                          ),
+                          label: const Text('Excluir'),
+                          icon: const Icon(Icons.delete),
+                          onPressed: () => onRemove(tr.id),
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.delete),
+                          color: Colors.red[700],
+                          onPressed: () => onRemove(tr.id),
+                        ),
+                ),
+              );
+            },
+          );
   }
 }
