@@ -116,6 +116,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 margin: const EdgeInsets.symmetric(vertical: 8),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Theme.of(context).colorScheme.tertiary,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0)),
                   ),

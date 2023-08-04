@@ -6,7 +6,7 @@ import 'package:expenses/components/chart.dart';
 import 'package:expenses/components/transaction_form.dart';
 import 'package:flutter/material.dart';
 
-import 'components/transaction_list.dart';
+import 'components/transaction_list/transaction_list.dart';
 import 'models/transaction.dart';
 
 void main() => runApp(ExpensesApp());
@@ -156,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   //   ),
                   if (_showChart || !isLandscape)
                     SizedBox(
-                      height: availableHeight * (isLandscape ? 0.6 : 0.2),
+                      height: availableHeight * (isLandscape ? 0.4 : 0.2),
                       child: Chart(_recentTransactions),
                     ),
                   if (!_showChart || !isLandscape)
