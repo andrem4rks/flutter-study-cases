@@ -4,8 +4,9 @@ import 'package:intl/intl.dart';
 
 class ListItem extends StatelessWidget {
   final Transaction _tr;
+  final void Function(String) onRemove;
 
-  const ListItem(this._tr, {super.key});
+  const ListItem(this._tr, this.onRemove, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -39,6 +40,21 @@ class ListItem extends StatelessWidget {
         subtitle: Text(
           DateFormat('d MMM y').format(_tr.date),
         ),
+        trailing: MediaQuery.of(context).size.width > 400
+            ? TextButton.icon(
+                style: ButtonStyle(
+                  foregroundColor: MaterialStateProperty.all(Colors.red[700]),
+                  iconColor: MaterialStateProperty.all(Colors.red[700]),
+                ),
+                label: const Text('Excluir'),
+                icon: const Icon(Icons.delete),
+                onPressed: () => onRemove(_tr.id),
+              )
+            : IconButton(
+                icon: const Icon(Icons.delete),
+                color: Colors.red[700],
+                onPressed: () => onRemove(_tr.id),
+              ),
       ),
     );
   }
